@@ -1,0 +1,30 @@
+export type ApiInfoResponse = {
+  ok: boolean
+  service: string
+  name: string
+  version: string
+  health: string
+  v1: string
+}
+
+export type DatabaseHealth = {
+  status: 'ok' | 'error'
+  driver: string
+  name: string | null
+  version: string | null
+  migrations: number | null
+  latency_ms: number | null
+  error?: string
+}
+
+export type HealthResponse = {
+  ok: boolean
+  service: string
+  status: 'healthy' | 'degraded'
+  app: string
+  env: string
+  database: DatabaseHealth
+  time: string
+  php: string
+  laravel: string
+}
