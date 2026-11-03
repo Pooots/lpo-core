@@ -1,4 +1,5 @@
 import {
+  BriefcaseBusiness,
   Building2,
   CalendarClock,
   FolderKanban,
@@ -13,6 +14,7 @@ export type AdminModulePath =
   | '/admin'
   | '/admin/talents'
   | '/admin/clients'
+  | '/admin/services'
   | '/admin/projects'
   | '/admin/tasks'
   | '/admin/hris'
@@ -47,6 +49,13 @@ export const ADMIN_MODULES: Array<AdminModule> = [
     path: '/admin/clients',
     icon: Building2,
     description: 'Manage business accounts, service requests, and proposals.',
+  },
+  {
+    id: 'services',
+    label: 'Services',
+    path: '/admin/services',
+    icon: BriefcaseBusiness,
+    description: 'Define the services LPO offers so clients can select what they need.',
   },
   {
     id: 'projects',

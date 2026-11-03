@@ -17,12 +17,18 @@ import GetStartedPage from '@/routes/GetStartedPage'
 import AccountPage from '@/routes/AccountPage'
 import CandidateRegisterPage from '@/routes/careers/CandidateRegisterPage'
 import CandidateLoginPage from '@/routes/careers/CandidateLoginPage'
+import CareersLayout from '@/routes/careers/CareersLayout'
+import CareersModulePage from '@/routes/careers/CareersModulePage'
+import CareersDashboardPage from '@/routes/careers/DashboardPage'
+import ProfilePage from '@/routes/careers/ProfilePage'
 import BusinessRegisterPage from '@/routes/business/BusinessRegisterPage'
 import BusinessLoginPage from '@/routes/business/BusinessLoginPage'
 import AdminLoginPage from '@/routes/admin/AdminLoginPage'
 import AdminLayout from '@/routes/admin/AdminLayout'
 import AdminModulePage from '@/routes/admin/AdminModulePage'
 import ClientsPage from '@/routes/admin/ClientsPage'
+import AdminDashboardPage from '@/routes/admin/DashboardPage'
+import ServicesPage from '@/routes/admin/ServicesPage'
 import TalentsPage from '@/routes/admin/TalentsPage'
 import { ACCOUNT_HOME, ACCOUNT_LOGIN, authService } from '@/services/authService'
 
@@ -87,8 +93,16 @@ const careersAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/careers/account',
   beforeLoad: requireUserType('talent'),
-  component: () => <AccountPage accountType="talent" />,
+  component: CareersLayout,
 })
+
+function careersModuleRoute<TPath extends string>(path: TPath, moduleId: string) {
+  return createRoute({
+    getParentRoute: () => careersAccountRoute,
+    path,
+    component: () => <CareersModulePage moduleId={moduleId} />,
+  })
+}
 
 const businessRegisterRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -139,13 +153,32 @@ const routeTree = rootRoute.addChildren([
   getStartedRoute,
   careersRegisterRoute,
   careersLoginRoute,
-  careersAccountRoute,
+  careersAccountRoute.addChildren([
+    createRoute({
+      getParentRoute: () => careersAccountRoute,
+      path: '/',
+      component: CareersDashboardPage,
+    }),
+    createRoute({
+      getParentRoute: () => careersAccountRoute,
+      path: 'profile',
+      component: ProfilePage,
+    }),
+    careersModuleRoute('contract', 'contract'),
+    careersModuleRoute('work-diary', 'work-diary'),
+    careersModuleRoute('payout', 'payout'),
+    careersModuleRoute('attendance', 'attendance'),
+  ]),
   businessRegisterRoute,
   businessLoginRoute,
   businessAccountRoute,
   adminLoginRoute,
   adminRoute.addChildren([
-    adminModuleRoute('/', 'dashboard'),
+    createRoute({
+      getParentRoute: () => adminRoute,
+      path: '/',
+      component: AdminDashboardPage,
+    }),
     createRoute({
       getParentRoute: () => adminRoute,
       path: 'talents',
@@ -155,6 +188,11 @@ const routeTree = rootRoute.addChildren([
       getParentRoute: () => adminRoute,
       path: 'clients',
       component: ClientsPage,
+    }),
+    createRoute({
+      getParentRoute: () => adminRoute,
+      path: 'services',
+      component: ServicesPage,
     }),
     adminModuleRoute('projects', 'projects'),
     adminModuleRoute('tasks', 'tasks'),

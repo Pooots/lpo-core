@@ -23,8 +23,9 @@ import {
   useNotice,
 } from '@/components/admin/ui'
 import { EASE_OUT } from '@/components/home/ui'
-import { SERVICE_OPTIONS, labelFor } from '@/lib/accountOptions'
+import { labelFor } from '@/lib/accountOptions'
 import { parseApiError } from '@/lib/apiErrors'
+import { useServiceCatalog } from '@/hooks/useServiceCatalog'
 import {
   CLIENT_STATUSES,
   ENGAGEMENT_TYPES,
@@ -50,12 +51,9 @@ const EMPTY_COUNTS: ClientCounts = {
 
 const PIPELINE_LENGTH = CLIENT_STATUSES.filter((s) => !s.offPipeline).length
 
-function serviceLabel(value: string): string {
-  return SERVICE_OPTIONS.find((s) => s.value === value)?.label ?? value
-}
-
 export default function ClientsPage() {
   const queryClient = useQueryClient()
+  const { labelFor: serviceLabel } = useServiceCatalog()
   const [page, setPage] = useState(1)
   const [searchInput, setSearchInput] = useState('')
   const [filter, setFilter] = useState<Filter>('all')

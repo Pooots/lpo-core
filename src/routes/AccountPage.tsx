@@ -23,10 +23,10 @@ import { CONTACT } from '@/components/home/content'
 import { EASE_OUT } from '@/components/home/ui'
 import {
   EXPERIENCE_LEVELS,
-  SERVICE_OPTIONS,
   WORK_SETUPS,
   labelFor,
 } from '@/lib/accountOptions'
+import { useServiceCatalog } from '@/hooks/useServiceCatalog'
 import { parseApiError } from '@/lib/apiErrors'
 import {
   CV_ACCEPT,
@@ -265,6 +265,7 @@ function Chips({ items, className }: { items: Array<string>; className: string }
 }
 
 function ProfileDetails({ session }: { session: AccountSession }) {
+  const { labelFor: serviceLabel } = useServiceCatalog()
   if (session.type === 'admin') return null
 
   const theme = THEME[session.type]
@@ -315,7 +316,7 @@ function ProfileDetails({ session }: { session: AccountSession }) {
       {user.phone && <Detail label="Phone">{user.phone}</Detail>}
       <Detail label="Services requested">
         <Chips
-          items={(p?.services ?? []).map((s) => labelFor(SERVICE_OPTIONS, s))}
+          items={(p?.services ?? []).map((s) => serviceLabel(s))}
           className={theme.chip}
         />
       </Detail>

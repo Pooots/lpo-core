@@ -32,8 +32,9 @@ import {
   TextAreaField,
   TextField,
 } from '@/components/auth/fields'
-import { COMPANY_SIZES, INDUSTRY_OPTIONS, SERVICE_OPTIONS } from '@/lib/accountOptions'
+import { COMPANY_SIZES, INDUSTRY_OPTIONS } from '@/lib/accountOptions'
 import { parseApiError } from '@/lib/apiErrors'
+import { useServiceCatalog } from '@/hooks/useServiceCatalog'
 import { CLIENT_STATUSES, CURRENCIES, ENGAGEMENT_TYPES, LEAD_SOURCES } from '@/lib/clientOptions'
 import { generatePassword, isEmail, isUrl, normalizeUrl, passwordError } from '@/lib/formValidation'
 import { cn } from '@/lib/utils'
@@ -204,6 +205,7 @@ function ServicePicker({
   onChange: (value: Array<string>) => void
   error?: string
 }) {
+  const { options } = useServiceCatalog()
   const toggle = (service: string) =>
     onChange(value.includes(service) ? value.filter((v) => v !== service) : [...value, service])
 
@@ -214,7 +216,7 @@ function ServicePicker({
         <span className="text-[11px] font-medium text-muted-foreground">{value.length} selected</span>
       </p>
       <div className="grid gap-2 sm:grid-cols-2">
-        {SERVICE_OPTIONS.map((service) => {
+        {options.map((service) => {
           const Icon = service.icon
           const active = value.includes(service.value)
           return (

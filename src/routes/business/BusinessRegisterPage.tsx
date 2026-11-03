@@ -29,8 +29,9 @@ import {
   TextField,
   toneClasses,
 } from '@/components/auth/fields'
-import { COMPANY_SIZES, INDUSTRY_OPTIONS, SERVICE_OPTIONS } from '@/lib/accountOptions'
+import { COMPANY_SIZES, INDUSTRY_OPTIONS } from '@/lib/accountOptions'
 import { parseApiError } from '@/lib/apiErrors'
+import { useServiceCatalog } from '@/hooks/useServiceCatalog'
 import {
   
   firstStepWithError,
@@ -136,6 +137,7 @@ function ServicePicker({
   onChange: (value: Array<string>) => void
   error?: string
 }) {
+  const { options } = useServiceCatalog()
   const toggle = (service: string) =>
     onChange(
       value.includes(service) ? value.filter((v) => v !== service) : [...value, service],
@@ -150,7 +152,7 @@ function ServicePicker({
         </span>
       </div>
       <div className="grid gap-2.5 sm:grid-cols-2">
-        {SERVICE_OPTIONS.map(({ value: service, label, description, icon: Icon }, i) => {
+        {options.map(({ value: service, label, description, icon: Icon }, i) => {
           const active = value.includes(service)
           return (
             <motion.button

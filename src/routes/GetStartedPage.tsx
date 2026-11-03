@@ -209,7 +209,7 @@ export default function GetStartedPage() {
   const [selected, setSelected] = useState<AccountType | null>(null)
   const current = OPTIONS.find((o) => o.type === selected) ?? null
 
-  const go = (option: Option) => navigate({ to: option.register })
+  const go = (option: Option) => navigate({ to: option.login })
 
   return (
     <MotionConfig reducedMotion="user">

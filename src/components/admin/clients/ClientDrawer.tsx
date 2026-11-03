@@ -30,7 +30,8 @@ import {
   PipelineStepper,
   initials,
 } from '@/components/admin/drawer'
-import { SERVICE_OPTIONS, labelFor } from '@/lib/accountOptions'
+import { labelFor } from '@/lib/accountOptions'
+import { useServiceCatalog } from '@/hooks/useServiceCatalog'
 import {
   CLIENT_STATUSES,
   ENGAGEMENT_TYPES,
@@ -69,6 +70,8 @@ export function ClientDrawer({
   onChangeStatus: (client: AdminClient, status: ClientStatus) => void
   changingStatus: boolean
 }) {
+  const { options, labelFor: serviceLabel } = useServiceCatalog()
+
   return (
     <DrawerShell open={client !== null} onClose={onClose} label={`${client?.company_name ?? 'Client'} details`}>
       {client && (
@@ -152,7 +155,7 @@ export function ClientDrawer({
               {client.services.length > 0 ? (
                 <div className="flex flex-wrap gap-1.5">
                   {client.services.map((value) => {
-                    const service = SERVICE_OPTIONS.find((s) => s.value === value)
+                    const service = options.find((s) => s.value === value)
                     const Icon = service?.icon ?? BadgeCheck
                     return (
                       <span
@@ -160,7 +163,7 @@ export function ClientDrawer({
                         className="inline-flex items-center gap-1.5 rounded-full bg-lpo-blue-soft px-2.5 py-1 text-[12px] font-medium text-lpo-navy ring-1 ring-lpo-blue/15"
                       >
                         <Icon className="size-3.5 text-lpo-blue" />
-                        {service?.label ?? value}
+                        {serviceLabel(value)}
                       </span>
                     )
                   })}
