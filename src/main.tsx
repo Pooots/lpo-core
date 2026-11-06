@@ -14,7 +14,6 @@ import type { UserType } from '@/types/auth'
 import HomePage from '@/routes/HomePage'
 import StatusPage from '@/routes/StatusPage'
 import GetStartedPage from '@/routes/GetStartedPage'
-import AccountPage from '@/routes/AccountPage'
 import CandidateRegisterPage from '@/routes/careers/CandidateRegisterPage'
 import CandidateLoginPage from '@/routes/careers/CandidateLoginPage'
 import CareersLayout from '@/routes/careers/CareersLayout'
@@ -23,6 +22,10 @@ import CareersDashboardPage from '@/routes/careers/DashboardPage'
 import ProfilePage from '@/routes/careers/ProfilePage'
 import BusinessRegisterPage from '@/routes/business/BusinessRegisterPage'
 import BusinessLoginPage from '@/routes/business/BusinessLoginPage'
+import BusinessLayout from '@/routes/business/BusinessLayout'
+import BusinessDashboardPage from '@/routes/business/DashboardPage'
+import ContractsPage from '@/routes/business/ContractsPage'
+import { LeadsPage, ReportsPage, TalentsPage as ClientTalentsPage, TasksPage } from '@/routes/business/WorkspacePages'
 import AdminLoginPage from '@/routes/admin/AdminLoginPage'
 import AdminLayout from '@/routes/admin/AdminLayout'
 import AdminModulePage from '@/routes/admin/AdminModulePage'
@@ -122,7 +125,7 @@ const businessAccountRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/business/account',
   beforeLoad: requireUserType('client'),
-  component: () => <AccountPage accountType="client" />,
+  component: BusinessLayout,
 })
 
 const adminLoginRoute = createRoute({
@@ -171,7 +174,38 @@ const routeTree = rootRoute.addChildren([
   ]),
   businessRegisterRoute,
   businessLoginRoute,
-  businessAccountRoute,
+  businessAccountRoute.addChildren([
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: '/',
+      component: BusinessDashboardPage,
+    }),
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: 'leads',
+      component: LeadsPage,
+    }),
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: 'contracts',
+      component: ContractsPage,
+    }),
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: 'talents',
+      component: ClientTalentsPage,
+    }),
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: 'tasks',
+      component: TasksPage,
+    }),
+    createRoute({
+      getParentRoute: () => businessAccountRoute,
+      path: 'reports',
+      component: ReportsPage,
+    }),
+  ]),
   adminLoginRoute,
   adminRoute.addChildren([
     createRoute({

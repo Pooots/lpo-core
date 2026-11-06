@@ -25,6 +25,7 @@ function DarkField({
   label,
   icon: Icon,
   type = 'text',
+  name,
   value,
   onChange,
   error,
@@ -35,6 +36,7 @@ function DarkField({
   label: string
   icon: LucideIcon
   type?: string
+  name: string
   value: string
   onChange: (value: string) => void
   error?: string
@@ -60,9 +62,11 @@ function DarkField({
         <Icon className="size-[18px] shrink-0 text-white/40 transition-colors group-focus-within:text-lpo-yellow" />
         <input
           id={id}
+          name={name}
           type={isPassword && visible ? 'text' : type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          onInput={(e) => onChange(e.currentTarget.value)}
           placeholder={placeholder}
           autoComplete={autoComplete}
           autoFocus={autoFocus}
@@ -98,18 +102,23 @@ export default function AdminLoginPage() {
   const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  const submit = async (event: FormEvent) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
+    // Read the live field values. Browser autofill can show a password in the
+    // input without updating React state, which then sends a different password.
+    const formData = new FormData(event.currentTarget)
+    const emailValue = String(formData.get('email') ?? '').trim()
+    const passwordValue = String(formData.get('password') ?? '')
     const nextErrors: FieldErrors = {}
-    if (!isEmail(email)) nextErrors.email = 'Enter a valid email address.'
-    if (!password) nextErrors.password = 'Enter your password.'
+    if (!isEmail(emailValue)) nextErrors.email = 'Enter a valid email address.'
+    if (!passwordValue) nextErrors.password = 'Enter your password.'
     setErrors(nextErrors)
     if (Object.keys(nextErrors).length > 0) return
 
     setLoading(true)
     setServerError(null)
     try {
-      await authService.login({ email: email.trim(), password, type: 'admin' })
+      await authService.login({ email: emailValue, password: passwordValue, type: 'admin' })
       navigate({ to: ACCOUNT_HOME.admin })
     } catch (error) {
       const info = parseApiError(error, 'We could not sign you in. Please try again.')
@@ -210,7 +219,7 @@ export default function AdminLoginPage() {
                 Manage talents, clients, projects, and operations from one place.
               </motion.p>
 
-              <form onSubmit={submit} noValidate className="mt-8 space-y-5">
+              <form onSubmit={submit} noValidate autoComplete="off" className="mt-8 space-y-5">
                 <AnimatePresence initial={false}>
                   {serverError && (
                     <motion.div
@@ -234,6 +243,7 @@ export default function AdminLoginPage() {
                   label="Email address"
                   icon={Mail}
                   type="email"
+                  name="email"
                   value={email}
                   onChange={(v) => {
                     setEmail(v)
@@ -241,13 +251,14 @@ export default function AdminLoginPage() {
                   }}
                   error={errors.email}
                   placeholder="you@lpoph.com"
-                  autoComplete="username"
+                  autoComplete="off"
                   autoFocus
                 />
                 <DarkField
                   label="Password"
                   icon={Lock}
                   type="password"
+                  name="password"
                   value={password}
                   onChange={(v) => {
                     setPassword(v)
@@ -255,7 +266,7 @@ export default function AdminLoginPage() {
                   }}
                   error={errors.password}
                   placeholder="Your password"
-                  autoComplete="current-password"
+                  autoComplete="off"
                 />
 
                 <motion.button
